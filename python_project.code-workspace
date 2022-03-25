@@ -54,7 +54,7 @@
         "program": "${file}",
         "console": "integratedTerminal",
         "justMyCode": true,
-        "args": ["/home/girish/Downloads/pythonProject01/data"]
+        "args": ["${env:HOME}/Downloads/pythonProject01/data"]
       }
     ]
   }
