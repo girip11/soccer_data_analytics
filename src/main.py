@@ -7,12 +7,29 @@ import numpy as np
 import pandas as pd
 
 from analysis.ball_tracker import compute_ball_trajectory_between_events
-from analysis.pass_analyzer import PassingStatistics
+from analysis.pass_statistics import (
+    compute_pass_status,
+    find_most_pass_completing_player,
+    find_most_passing_player,
+)
 from metadata import Event, EventType, TrackedPosition
 from utils import event_utils
 
 
 def load_csv_data(dataset_path: Path, column_dtypes: Mapping[str, np.dtype]) -> pd.DataFrame:
+    """Return the dataframe from CSV file
+
+    Parameters
+    ----------
+    dataset_path : Path
+        Path to the csv file
+    column_dtypes : Mapping[str, np.dtype]
+        column names and type metadata
+
+    Returns
+    -------
+    pd.DataFrame
+    """
     return pd.read_csv(
         dataset_path,
         sep=",",
@@ -38,17 +55,19 @@ def compute_challenges(events_df: pd.DataFrame, tracked_pos_df: pd.DataFrame) ->
         f"initial kickoff to the first Ball Out of Play: {distance}"
     )
 
-    passing_stats = PassingStatistics()
     # task-3
-    passing_stats.add_pass_status(events_with_positions)
-    player_with_most_passes: int = passing_stats.player_with_most_passes(events_with_positions)
-    print(f"Player with most passes: {player_with_most_passes}")
+    events_with_pass_status: pd.DataFrame = compute_pass_status(events_with_positions)
+    player_id, passes = find_most_passing_player(events_with_pass_status)
+    print(f"Player {player_id} made most passes with count {passes} ")
 
     # task-4
-    player_with_highest_completion_rate = passing_stats.player_with_max_pass_completion_rate(
-        events_with_positions
+    player_id, completion_rate, total_passes = find_most_pass_completing_player(
+        events_with_pass_status
     )
-    print(f"Player with highest pass completion rate: {player_with_highest_completion_rate}")
+    print(
+        f"Player {player_id} has the best pass completion rate of {completion_rate} "
+        f"with {total_passes} passes"
+    )
 
 
 def main(*args: str) -> None:

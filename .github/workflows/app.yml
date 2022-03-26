@@ -24,20 +24,20 @@ jobs:
 
       - name: Checking formatting with black
         run: |
-          python -m black -t py39 -l 100 --check src
+          python -m black -t py39 -l 100 --check src tests
 
       - name: Checking formatting with isort
         run: |
-          python -m isort --py 38 --check src
+          python -m isort --py 38 --check src tests
 
       - name: Linting with flake8
         run: |
-          python -m flake8 src
+          python -m flake8 src tests
 
       - name: Type checking with mypy
         run: |
-          python -m mypy aoc_*
+          python -m mypy src tests
 
       - name: Test with pytest
         run: |
-          python -m pytest aoc_*
+          python -m pytest tests
