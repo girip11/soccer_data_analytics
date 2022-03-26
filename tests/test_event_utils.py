@@ -40,10 +40,10 @@ def test_get_events_between() -> None:
 
 def test_is_event_like_df() -> None:
     test_events_df = get_test_events()
-    assert event_utils.is_event_like_df(test_events_df) == True
+    assert event_utils.is_event_like_df(test_events_df)
 
     test_events_df = test_events_df.assign(pass_status=np.full(test_events_df.shape[0], -1))
-    assert event_utils.is_event_like_df(test_events_df) == True
+    assert event_utils.is_event_like_df(test_events_df)
 
     test_events_df.drop(Event.event, inplace=True, axis=1)
-    assert event_utils.is_event_like_df(test_events_df) == False
+    assert not event_utils.is_event_like_df(test_events_df)
