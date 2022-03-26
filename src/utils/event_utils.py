@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from pandas.api.types import pandas_dtype
 
-from metadata import Event, TrackedPosition
+from src.metadata import Event, TrackedPosition
 
 
 def _convert_time_to_ms(time_in_sec: float, start_time_in_ms: int) -> int:

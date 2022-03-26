@@ -17,7 +17,7 @@ from typing import Callable, List, Mapping, Tuple
 import numpy as np
 import pandas as pd
 
-from metadata import Event, EventType
+from src.metadata import Event, EventType
 
 
 class PassStatus(Enum):
@@ -120,7 +120,7 @@ def compute_pass_status(events_df: pd.DataFrame) -> pd.DataFrame:
     """
     events_df.sort_values(by=Event.event_id, ascending=True, inplace=True)
     events_df = events_df.assign(
-        PASS_STATUS_COL=np.full(events_df.shape[0], PassStatus.Not_A_Pass.value, dtype="int8")
+        pass_status=np.full(events_df.shape[0], PassStatus.Not_A_Pass.value, dtype="int8")
     )
 
     def set_pass_status(

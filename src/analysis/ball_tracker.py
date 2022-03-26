@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 from scipy.spatial import distance
 
-from metadata import Event
-from utils.event_utils import get_event_id_for, get_events_between
+from src.metadata import Event
+from src.utils.event_utils import get_event_id_for, get_events_between
 
 
 def compute_ball_trajectory_between_events(

@@ -6,14 +6,14 @@ from typing import Mapping
 import numpy as np
 import pandas as pd
 
-from analysis.ball_tracker import compute_ball_trajectory_between_events
-from analysis.pass_statistics import (
+from src.analysis.ball_tracker import compute_ball_trajectory_between_events
+from src.analysis.pass_statistics import (
     compute_pass_status,
     find_most_pass_completing_player,
     find_most_passing_player,
 )
-from metadata import Event, EventType, TrackedPosition
-from utils import event_utils
+from src.metadata import Event, EventType, TrackedPosition
+from src.utils import event_utils
 
 
 def load_csv_data(dataset_path: Path, column_dtypes: Mapping[str, np.dtype]) -> pd.DataFrame:
