@@ -52,7 +52,7 @@ def compute_challenges(events_df: pd.DataFrame, tracked_pos_df: pd.DataFrame) ->
     )
     print(
         "Length of the ball trajectory from the "
-        f"initial kickoff to the first Ball Out of Play: {distance}"
+        f"initial kickoff to the first Ball Out of Play: {distance} meters"
     )
 
     # task-3
@@ -65,7 +65,7 @@ def compute_challenges(events_df: pd.DataFrame, tracked_pos_df: pd.DataFrame) ->
         events_with_pass_status
     )
     print(
-        f"Player {player_id} has the best pass completion rate of {completion_rate} "
+        f"Player {player_id} has the best pass completion rate of {completion_rate}% "
         f"with {total_passes} passes"
     )
 

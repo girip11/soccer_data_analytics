@@ -1,9 +1,23 @@
+"""Module providing utility functions to compute the ball trajectory.
+
+I thought of two approaches for computing the length of the ball trajectory.
+
+1. Find the distance between the player positions in the successive events.
+This is relatively cheaper to compute but still provides a good approximation.
+
+2. For every event between the start event and end event, calculate how many
+frames(40ms apart) would exist and note the player with the ball at that timeframe.
+This involves too much computation given player position is tracked every 40ms.
+
+I went ahead with approach 1.
+"""
 from typing import Tuple
 
 import numpy as np
 import pandas as pd
 from scipy.spatial import distance
 
+from metadata import Event
 from utils.event_utils import get_event_id_for, get_events_between
 
 
@@ -30,6 +44,7 @@ def compute_ball_trajectory_between_events(
     event2_id: int = get_event_id_for(events_df, event_name=event2[0], n=event2[1])
 
     subevents_df: pd.DataFrame = get_events_between(events_df, event1_id, event2_id)
+    subevents_df.sort_values(by=Event.event_id, ascending=True, inplace=True)
 
     ball_trajectory_length: float = 0.0
 

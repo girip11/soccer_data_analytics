@@ -12,7 +12,7 @@ Observation: A successful cross event can be followed by
 """
 
 from enum import Enum
-from typing import Mapping, Tuple
+from typing import Callable, List, Mapping, Tuple
 
 import numpy as np
 import pandas as pd
@@ -118,19 +118,34 @@ def compute_pass_status(events_df: pd.DataFrame) -> pd.DataFrame:
     pd.DataFrame
         Dataframe with the pass status column added.
     """
+    events_df.sort_values(by=Event.event_id, ascending=True, inplace=True)
     events_df = events_df.assign(
         PASS_STATUS_COL=np.full(events_df.shape[0], PassStatus.Not_A_Pass.value, dtype="int8")
     )
-    for window in events_df.rolling(window=3):
-        if len(window) != 3:
-            continue
-        event_id_filter: pd.Series = events_df[Event.event_id] == window.iloc[0][Event.event_id]
 
+    def set_pass_status(
+        window: pd.DataFrame, pass_checks: List[Callable[[pd.DataFrame], bool]]
+    ) -> None:
+        event_id_filter: pd.Series = events_df[Event.event_id] == window.iloc[0][Event.event_id]
         if window.iloc[0][Event.event] in [EventType.PASS, EventType.CROSS]:
-            if any([is_short_pass_completed(window), is_long_pass_completed(window)]):
+            if any(pass_check(window) for pass_check in pass_checks):
                 events_df.loc[event_id_filter, PASS_STATUS_COL] = PassStatus.Success.value
             else:
                 events_df.loc[event_id_filter, PASS_STATUS_COL] = PassStatus.Failure.value
+
+    for window in events_df.rolling(window=3):
+        if len(window) != 3:
+            continue
+        set_pass_status(window, [is_short_pass_completed, is_long_pass_completed])
+
+    # Last 2 events due to rolling window of size 3
+    set_pass_status(events_df.iloc[[-2, -1]], [is_short_pass_completed])
+
+    # Handle last event. Last pass event is considered as failed
+    if events_df.iloc[-1][Event.event] == EventType.PASS:
+        events_df.loc[
+            events_df[Event.event_id] == events_df.iloc[-1][Event.event_id], PASS_STATUS_COL
+        ] = PassStatus.Failure.value
 
     return events_df
 

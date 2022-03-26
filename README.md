@@ -2,6 +2,8 @@
 
 ## Checklists
 
-- Complete the challenges
-- Refactor, add documentation and tests
-- Containerize
+- [x] Complete the challenges
+- [x] Refactor, add documentation and tests
+- [x] Containerize
+
+In production, I would have to do extensive logging.
