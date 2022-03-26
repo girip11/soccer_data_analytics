@@ -1,0 +1,43 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Soccer Analytics
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+
+      - name: Install dev dependencies
+        run: |
+          python -m pip install -r requirements-dev.txt
+
+      - name: Checking formatting with black
+        run: |
+          python -m black -t py39 -l 100 --check src
+
+      - name: Checking formatting with isort
+        run: |
+          python -m isort --py 38 --check src
+
+      - name: Linting with flake8
+        run: |
+          python -m flake8 src
+
+      - name: Type checking with mypy
+        run: |
+          python -m mypy aoc_*
+
+      - name: Test with pytest
+        run: |
+          python -m pytest aoc_*
