@@ -4,6 +4,7 @@ import pandas as pd
 from pandas.api.types import pandas_dtype
 
 from metadata import Event, EventType
+from utils.event_utils import get_current_next_event_pairs
 
 
 class PassingStatistics:
@@ -12,21 +13,6 @@ class PassingStatistics:
     _PASS_SUCCESS: ClassVar[int] = 1
     _PASS_FAILURE: ClassVar[int] = 0
     _NOT_A_PASS: ClassVar[int] = -1
-
-    def _pair_with_next_event(self, events_df: pd.DataFrame) -> pd.DataFrame:
-        events_df[self._next_event] = events_df[Event.event_id].apply(lambda e: e + 1)
-
-        current_next_event_pairs = events_df.merge(
-            events_df[[Event.event_id, Event.event]],
-            how="inner",
-            left_on=[self._next_event],
-            right_on=[Event.event_id],
-            suffixes=(None, "_next"),
-            validate="1:1",
-        ).filter(list(events_df.columns) + [f"{Event.event}_next"])
-
-        events_df.drop(self._next_event, axis=1, inplace=True)
-        return current_next_event_pairs
 
     @staticmethod
     def _set_pass_status(row: pd.Series) -> pd.Series:
@@ -39,11 +25,11 @@ class PassingStatistics:
         return pd.Series(PassingStatistics._NOT_A_PASS)
 
     def add_pass_status(self, events_df: pd.DataFrame) -> None:
-        current_next_event_pairs = self._pair_with_next_event(events_df)
+        current_next_event_pairs = get_current_next_event_pairs(
+            events_df, current_event_cols=Event.columns(), next_event_cols=[Event.event]
+        )
         events_df["pass_status"] = (
-            current_next_event_pairs.apply(
-                PassingStatistics._set_pass_status, axis=1, raw=False
-            )
+            current_next_event_pairs.apply(PassingStatistics._set_pass_status, axis=1, raw=False)
             .astype(pandas_dtype("Int8"))
             .iloc[:, 0]
         )
@@ -68,10 +54,7 @@ class PassingStatistics:
     def _pass_completion_rate(pass_status: pd.Series) -> float:
         return (pass_status.sum() / pass_status.count()) * 100.0
 
-    def player_with_max_pass_completion_rate(
-        self,
-        events_df: pd.DataFrame,
-    ) -> Tuple[int, int, int]:
+    def player_with_max_pass_completion_rate(self, events_df: pd.DataFrame) -> Tuple[int, int, int]:
         pass_events_filter = (events_df[Event.event] == EventType.PASS) | (
             events_df[Event.event] == EventType.CROSS
         )
