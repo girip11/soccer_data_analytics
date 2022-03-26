@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 from typing import Mapping
@@ -51,7 +52,7 @@ def compute_challenges(events_df: pd.DataFrame, tracked_pos_df: pd.DataFrame) ->
 
 
 def main(*args: str) -> None:
-    data_dir: Path = Path(args[0]).absolute()
+    data_dir: Path = Path(args[0] if len(args) == 1 else os.environ["DATA_DIR"]).absolute()
     events_csv: Path = data_dir / "events.csv"
     tracking_csv: Path = data_dir / "tracking.csv"
 
@@ -59,9 +60,9 @@ def main(*args: str) -> None:
     event_utils.convert_event_time_to_ms(events_df)
     tracked_pos_df: pd.DataFrame = load_csv_data(tracking_csv, TrackedPosition.column_types())
 
+    print("Performing analysis on the data...")
     compute_challenges(events_df, tracked_pos_df)
-
-    print("end")
+    print("Completed the analysis.")
 
 
 if __name__ == "__main__":

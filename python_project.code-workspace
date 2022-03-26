@@ -7,7 +7,7 @@
   "settings": {
     "terminal.integrated.env.linux": {
       "VSCODE_INTEGRATED_TERMINAL": "true",
-      "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}"
+      "PYTHONPATH": "${workspaceFolder}:${workspaceFolder}/src:${env:PYTHONPATH}"
     },
     "terminal.integrated.rendererType": "dom",
     "git.autorefresh": true,
@@ -24,6 +24,7 @@
     "python.languageServer": "Pylance",
     "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
     "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["-l", "100"],
     "autoDocstring.docstringFormat": "numpy",
     "python.linting.pylintEnabled": true,
     "python.linting.flake8Enabled": true,
